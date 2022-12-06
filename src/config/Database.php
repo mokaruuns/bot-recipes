@@ -25,6 +25,7 @@ class Database
         }
     }
 
+
     public function getConnection(): ?PDO
     {
         return $this->conn;
@@ -37,21 +38,12 @@ class Database
             id SERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             url VARCHAR(255),
-            count_ingredients SMALLINT NOT NULL
+            count_ingredients SMALLINT NOT NULL,
+            recipe json NOT NULL,
+            images_url json 
       )";
         $this->conn->exec($sql);
     }
-
-    private function createRecipesTable(): void
-    {
-        $query = "CREATE TABLE IF NOT EXISTS recipes (
-            id SERIAL PRIMARY KEY,
-            recipe json NOT NULL,
-            images json 
-        )";
-        $this->conn->exec($query);
-    }
-
 
     private function createIngredientsTable(): void
     {
@@ -63,21 +55,12 @@ class Database
     }
 
 
-    private function createDishRecipeTable(): void
+
+    private function createDishIngredientTable(): void
     {
-        $query = "CREATE TABLE IF NOT EXISTS dish_recipe (
+        $query = "CREATE TABLE IF NOT EXISTS dish_ingredient (
             id SERIAL PRIMARY KEY,
             dish_id int NOT NULL,
-            recipe_id int NOT NULL
-        )";
-        $this->conn->exec($query);
-    }
-
-    private function createRecipeIngredientTable(): void
-    {
-        $query = "CREATE TABLE IF NOT EXISTS recipe_ingredient (
-            id SERIAL PRIMARY KEY,
-            recipe_id int NOT NULL,
             ingredient_id int NOT NULL
         )";
         $this->conn->exec($query);
@@ -86,11 +69,8 @@ class Database
     public function fillDatabase(): void
     {
         $this->createDishesTable();
-        $this->createRecipesTable();
         $this->createIngredientsTable();
-        $this->createDishRecipeTable();
-        $this->createRecipeIngredientTable();
-
+        $this->createDishIngredientTable();
         $this->fillDishesTable();
     }
 

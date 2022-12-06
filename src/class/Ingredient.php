@@ -70,4 +70,18 @@ class Ingredient
         return $this->id;
     }
 
+    public function getSimilarIngredientsId(): array
+    {
+        $query = "SELECT id FROM " . $this->table_name . " WHERE ingredient LIKE :ingredient";
+
+        $stmt = $this->conn->prepare($query);
+
+        $ingredient = "%" . $this->ingredient . "%";
+        $stmt->bindParam(":ingredient", $ingredient);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
 }
