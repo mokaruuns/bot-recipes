@@ -1,0 +1,6 @@
+{
+  "require": {
+    "vkcom/vk-php-sdk": "dev-master",
+    "ext-pdo": "*"
+  }
+}
