@@ -2,21 +2,9 @@
 
 require_once realpath(dirname(__FILE__)) . "/../../config.php";
 
+
 use VK\CallbackApi\Server\VKCallbackApiServerHandler;
 use VK\Client\VKApiClient;
-use VK\Exceptions\Api\VKApiMessagesCantFwdException;
-use VK\Exceptions\Api\VKApiMessagesChatBotFeatureException;
-use VK\Exceptions\Api\VKApiMessagesChatUserNoAccessException;
-use VK\Exceptions\Api\VKApiMessagesContactNotFoundException;
-use VK\Exceptions\Api\VKApiMessagesDenySendException;
-use VK\Exceptions\Api\VKApiMessagesKeyboardInvalidException;
-use VK\Exceptions\Api\VKApiMessagesPrivacyException;
-use VK\Exceptions\Api\VKApiMessagesTooLongForwardsException;
-use VK\Exceptions\Api\VKApiMessagesTooLongMessageException;
-use VK\Exceptions\Api\VKApiMessagesTooManyPostsException;
-use VK\Exceptions\Api\VKApiMessagesUserBlockedException;
-use VK\Exceptions\VKApiException;
-use VK\Exceptions\VKClientException;
 
 class ServerHandler extends VKCallbackApiServerHandler
 {
@@ -35,22 +23,6 @@ class ServerHandler extends VKCallbackApiServerHandler
         }
     }
 
-    /**
-     * @throws VKApiMessagesPrivacyException
-     * @throws VKApiMessagesDenySendException
-     * @throws VKApiMessagesTooLongMessageException
-     * @throws VKApiMessagesChatUserNoAccessException
-     * @throws VKApiMessagesTooManyPostsException
-     * @throws VKApiMessagesChatBotFeatureException
-     * @throws VKClientException
-     * @throws VKApiMessagesCantFwdException
-     * @throws VKApiMessagesUserBlockedException
-     * @throws VKApiException
-     * @throws VKApiMessagesKeyboardInvalidException
-     * @throws VKApiMessagesContactNotFoundException
-     * @throws VKApiMessagesTooLongForwardsException
-     * @throws Exception
-     */
     public function messageNew(int $group_id, ?string $secret, array $object)
     {
         $message = $object["message"];
