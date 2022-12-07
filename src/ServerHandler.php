@@ -55,15 +55,16 @@ class ServerHandler extends VKCallbackApiServerHandler
      */
     public function messageNew(int $group_id, ?string $secret, array $object)
     {
+        if ($secret != GROUP_SECRET) {
+            echo "nok";
+            return;
+        }
         $message = $object["message"];
-        $text = $message->text;
         $user_id = $message->from_id;
-
-
         $this->vkApi->messages()->send(BOT_TOKEN, [
             "user_id" => $user_id,
             "random_id" => random_int(0, PHP_INT_MAX),
-            "message" => "Command not found!"
+            "message" => "Command not found!",
         ]);
 
         echo "ok";
