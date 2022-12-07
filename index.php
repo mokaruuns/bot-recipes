@@ -4,7 +4,7 @@
 require_once realpath(dirname(__FILE__)) . "/vendor/autoload.php";
 require_once realpath(dirname(__FILE__)) . '/config.php';
 
-require_once realpath(dirname(__FILE__)) . '/src/connect/ServerHandler.php';
+require_once realpath(dirname(__FILE__)) . '/src/ServerHandler.php';
 
 
 $handler = new ServerHandler();
