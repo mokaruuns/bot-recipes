@@ -20,7 +20,7 @@ class Dish
         $this->conn = $conn;
     }
 
-    public function getDish(): array
+    public function get(): array
     {
         return array(
             'name' => $this->name,
@@ -31,7 +31,7 @@ class Dish
         );
     }
 
-    public function setDish(array $dish): void
+    public function set(array $dish): void
     {
         $this->name = mb_strtolower($dish['name']);
         $this->url = $dish['url'];
@@ -41,7 +41,7 @@ class Dish
     }
 
 
-    private function insertDishReal(): int
+    private function insertReal(): int
     {
         $query = "INSERT INTO " . $this->table_name . " (name, url, count_ingredients, recipe, images_url) VALUES (:name, :url, :count_ingredients, :recipe, :images_url)";
 
@@ -62,19 +62,19 @@ class Dish
         return 0;
     }
 
-    public function insertDish(): bool
+    public function insert(): int
     {
-        $res = $this->getDishByName();
+        $res = $this->getByName();
         if ($res) {
             $this->id = $res['id'];
         } else {
-            $this->id = $this->insertDishReal();
+            $this->id = $this->insertReal();
         }
         return $this->id;
     }
 
 
-    public function getRandomDish(): void
+    public function getRandom(): array
     {
 
         $query = "SELECT * FROM $this->table_name TABLESAMPLE system_rows(1);";
@@ -83,13 +83,10 @@ class Dish
 
         $stmt->execute();
 
-        $res = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        $this->id = $res['id'];
-        $this->setDish($res);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    private function getDishByName()
+    private function getByName()
     {
         $query = "SELECT * FROM " . $this->table_name . " WHERE name = :name";
 
@@ -98,18 +95,17 @@ class Dish
         $stmt->bindParam(":name", $this->name);
 
         $stmt->execute();
-        $res = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $res;
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function insertDishIngredient(int $id): bool
+    public function insertDishIngredient(int $ingredient_id): bool
     {
         $query = "INSERT INTO " . $this->table_name_dish_ingredient . " (dish_id, ingredient_id) VALUES (:dish_id, :ingredient_id)";
 
         $stmt = $this->conn->prepare($query);
 
         $stmt->bindParam(":dish_id", $this->id);
-        $stmt->bindParam(":ingredient_id", $id);
+        $stmt->bindParam(":ingredient_id", $ingredient_id);
 
         if ($stmt->execute()) {
             return true;
@@ -118,30 +114,8 @@ class Dish
         return false;
     }
 
-    public function getDishByIngredientsIdInclude(array $ingredients): array
-    {
-        $query = "SELECT dish_id FROM " . $this->table_name_dish_ingredient . " WHERE ingredient_id IN (" . implode(',', $ingredients) . ") GROUP BY dish_id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
-    }
 
-    public function getDishByIngredientsIdExclude(array $ingredients): array
-    {
-        $query = "SELECT dish_id FROM " . $this->table_name_dish_ingredient . " WHERE ingredient_id NOT IN (" . implode(',', $ingredients) . ") GROUP BY dish_id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
-    }
-
-    public function getDishByIngredientsId(array $ingredients): array
-    {
-        $include = $this->getDishByIngredientsIdInclude($ingredients);
-        $exclude = $this->getDishByIngredientsIdExclude($ingredients);
-        return array_diff($include, $exclude);
-    }
-
-    public function getDishById(mixed $recipe_id)
+    public function getDishById(mixed $recipe_id): array
     {
         $query = "SELECT * FROM " . $this->table_name . " WHERE id = :id";
 
@@ -150,8 +124,7 @@ class Dish
         $stmt->bindParam(":id", $recipe_id);
 
         $stmt->execute();
-        $res = $stmt->fetch(PDO::FETCH_ASSOC);
-        $this->setDish($res);
-        return $res;
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

@@ -1,9 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace Bot;
 
 require_once "config.php";
 
+use Bot\action\ActionStorage;
+use Bot\action\Start;
+use Exception;
 use VK\CallbackApi\Server\VKCallbackApiServerHandler;
 use VK\Client\VKApiClient;
 use VK\Exceptions\Api\VKApiMessagesCantFwdException;
@@ -23,10 +27,14 @@ use VK\Exceptions\VKClientException;
 class ServerHandler extends VKCallbackApiServerHandler
 {
     private VKApiClient $vkApi;
+    private ActionStorage $actionStorage;
 
     public function __construct()
     {
         $this->vkApi = new VKApiClient("5.131");
+        $this->actionStorage = new ActionStorage(
+            new Start($this->vkApi)
+        );
 
     }
 
@@ -51,7 +59,7 @@ class ServerHandler extends VKCallbackApiServerHandler
      * @throws VKApiMessagesKeyboardInvalidException
      * @throws VKApiMessagesContactNotFoundException
      * @throws VKApiMessagesTooLongForwardsException
-     * @throws \Exception
+     * @throws Exception
      */
     public function messageNew(int $group_id, ?string $secret, array $object)
     {
@@ -60,12 +68,20 @@ class ServerHandler extends VKCallbackApiServerHandler
             return;
         }
         $message = $object["message"];
+        $text = $message->text;
+        $args = preg_split("/\s+/", $text);
         $user_id = $message->from_id;
-        $this->vkApi->messages()->send(BOT_TOKEN, [
-            "user_id" => $user_id,
-            "random_id" => random_int(0, PHP_INT_MAX),
-            "message" => "Command not found!",
-        ]);
+
+        $command = $this->actionStorage->getAction(array_shift($args));
+        if ($command != null) {
+            $command->execute($user_id, $args);
+        } else {
+            $this->vkApi->messages()->send(BOT_TOKEN, [
+                "user_id" => $user_id,
+                "random_id" => random_int(0, PHP_INT_MAX),
+                "message" => "Command not found!",
+            ]);
+        }
 
         echo "ok";
     }

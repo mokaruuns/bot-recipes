@@ -1,7 +1,7 @@
 <?php
 
 
-require_once realpath(dirname(__FILE__)) . '/../action/main.php';
+require_once realpath(dirname(__FILE__)) . '/../action/helper.php';
 
 class Database
 {

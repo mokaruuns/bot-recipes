@@ -1,7 +1,8 @@
 {
   "require": {
     "vkcom/vk-php-sdk": "dev-master",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-mbstring": "*"
   },
   "autoload": {
     "psr-4": {

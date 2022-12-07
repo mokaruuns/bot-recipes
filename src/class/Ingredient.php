@@ -5,6 +5,8 @@ class Ingredient
     private int $id;
     private string $ingredient;
 
+    private array $similar_ingredients;
+
     private PDO $conn;
 
     private string $table_name = "ingredients";
@@ -14,19 +16,19 @@ class Ingredient
         $this->conn = $conn;
     }
 
-    public function getIngredient(): array
+    public function get(): array
     {
         return array(
             'ingredient' => $this->ingredient
         );
     }
 
-    public function setIngredient(array $ingredient): void
+    public function set(array $ingredient): void
     {
         $this->ingredient = mb_strtolower($ingredient['ingredient']);
     }
 
-    private function insertIngredientReal(): int
+    private function insertReal(): int
     {
         $query = "INSERT INTO " . $this->table_name . " (ingredient) VALUES (:ingredient)";
 
@@ -41,18 +43,18 @@ class Ingredient
         return 0;
     }
 
-    public function insertIngredient(): bool
+    public function insert(): int
     {
-        $res = $this->getIngredientByName();
+        $res = $this->getByName();
         if ($res) {
             $this->id = $res['id'];
         } else {
-            $this->id = $this->insertIngredientReal();
+            $this->id = $this->insertReal();
         }
         return $this->id;
     }
 
-    public function getIngredientByName()
+    public function getByName()
     {
         $query = "SELECT * FROM " . $this->table_name . " WHERE ingredient = :ingredient";
 

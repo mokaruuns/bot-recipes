@@ -26,7 +26,7 @@ function testGetSimilarIngredients(): void
     $db = new Database();
     $conn = $db->getConnection();
     $ingredient = new Ingredient($conn);
-    $ingredient->setIngredient(["ingredient" => "лук"]);
+    $ingredient->set(["ingredient" => "лук"]);
     $res = $ingredient->getSimilarIngredientsId();
 //    foreach ($res as $ingredient) {
 //        echo $ingredient['ingredient'] . PHP_EOL;
@@ -52,7 +52,7 @@ function testGiveDishByIngredients(): void
 
     foreach ($res as $recipe_id) {
         $dish->getDishById($recipe_id);
-        echo $dish->getDish()['name'] . PHP_EOL;
+        echo $dish->get()['name'] . PHP_EOL;
     }
     echo microtime(true) - $start . PHP_EOL;
 }

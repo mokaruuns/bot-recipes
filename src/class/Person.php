@@ -4,7 +4,7 @@ class Person
 {
 
     private int $id;
-    private string $last_message;
+    private int $chat_position;
     private int $vk_id;
 
 
@@ -21,7 +21,7 @@ class Person
     {
         return array(
             'id' => $this->id,
-            'last_message' => $this->last_message,
+            'chat_position' => $this->chat_position,
             'vk_id' => $this->vk_id
         );
     }
@@ -29,40 +29,40 @@ class Person
     public function setPerson(array $person): void
     {
         $this->id = $person['id'];
-        $this->last_message = $person['last_message'];
+        $this->chat_position = $person['chat_position'];
         $this->vk_id = $person['vk_id'];
     }
 
 
-    public function createPersonReal(): bool
+    public function insertReal(): int
     {
-        $query = "INSERT INTO " . $this->table_name . " SET vk_id=:vk_id, last_message=:last_message";
+        $query = "INSERT INTO " . $this->table_name . " SET vk_id=:vk_id, chat_position=:chat_position";
 
         $stmt = $this->conn->prepare($query);
 
         $stmt->bindParam(":vk_id", $this->vk_id);
-        $stmt->bindParam(":last_message", $this->last_message);
+        $stmt->bindParam(":chat_position", $this->chat_position);
 
         if ($stmt->execute()) {
-            return true;
+            return $this->conn->lastInsertId();
         }
 
-        return false;
+        return 0;
     }
 
 
-    public function createPerson(): bool
+    public function insert(): bool
     {
-        $res = $this->readPerson();
+        $res = $this->getById();
         if ($res) {
             return $res['id'];
         } else {
-            return $this->createPersonReal();
+            return $this->insertReal();
         }
     }
 
 
-    public function readPerson(): array
+    public function getById(): array
     {
         $query = "SELECT * FROM " . $this->table_name . " WHERE vk_id = :vk_id";
 
