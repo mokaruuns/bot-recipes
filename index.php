@@ -1,10 +1,10 @@
 <?php
 
 
-require_once realpath(dirname(__FILE__)) . "/vendor/autoload.php";
-require_once realpath(dirname(__FILE__)) . '/config.php';
+use Bot\ServerHandler;
 
-require_once realpath(dirname(__FILE__)) . '/src/ServerHandler.php';
+require_once "vendor/autoload.php";
+require_once "config.php";
 
 
 $handler = new ServerHandler();

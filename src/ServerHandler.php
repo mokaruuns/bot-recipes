@@ -1,7 +1,8 @@
 <?php
 
-require_once realpath(dirname(__FILE__)) . "/../config.php";
+namespace Bot;
 
+require_once "config.php";
 
 use VK\CallbackApi\Server\VKCallbackApiServerHandler;
 use VK\Client\VKApiClient;
