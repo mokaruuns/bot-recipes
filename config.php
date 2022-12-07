@@ -1,7 +1,7 @@
 <?php
 const GROUP_SECRET = 'aNj7a8nsGgs7Hu';
 
-const API_CONFIRMATION_TOKEN = 'f016dd11';
+const API_CONFIRMATION_TOKEN = '6c76e7f0';
 
 const GROUP_ID = 217187964;
 
