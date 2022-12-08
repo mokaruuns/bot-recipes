@@ -24,8 +24,7 @@ class ServerHandler extends VKCallbackApiServerHandler
         $this->actionStorage = new ActionStorage(
             new Start($this->vkApi),
             new Help($this->vkApi),
-            new GetRandomDish($this->vkApi),
-            new Init($this->vkApi)
+            new GetRandomDish($this->vkApi)
         );
         $this->actionStorage->init($this->actionStorage);
 

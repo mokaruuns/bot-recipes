@@ -16,20 +16,29 @@ class Help implements Action
 
     public function execute(int $user_id, array $args): void
     {
+        $helps = [];
         if ($args[0] == null) {
-            $actionNames = implode(PHP_EOL, $this->getNames());
-            $description = $this->getDescription();
+            foreach ($this->actionStorage->getActions() as $action) {
+                $helps[] = $this->getHelp($action) . PHP_EOL;
+            }
         } else {
             $action = $this->actionStorage->getAction($args[0]);
-            $actionNames = implode(PHP_EOL, $action->getNames());
-            $description = $action->getDescription();
+            $helps[] = $this->getHelp($action) . PHP_EOL;
         }
-        $message = "Список команд:" . PHP_EOL . $actionNames . PHP_EOL . "Описание: " . PHP_EOL . $description;
+        $message = implode(PHP_EOL, $helps);
         $this->vkApi->messages()->send(BOT_TOKEN, [
             "peer_id" => $user_id,
             "message" => $message,
             "random_id" => random_int(0, 1000000)
         ]);
+    }
+
+    public function getHelp(Action $action): string
+    {
+        $actionNames = implode(" | ", $action->getNames());
+        $description = $action->getDescription();
+        return $actionNames . PHP_EOL . PHP_EOL . $description;
+
     }
 
     public function getNames(): array
