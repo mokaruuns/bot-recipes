@@ -4,7 +4,6 @@ namespace Bot\action;
 
 use VK\Client\VKApiClient;
 
-include __DIR__ . "/../resources/actions.php";
 
 class Start implements Action
 {
@@ -24,7 +23,7 @@ class Start implements Action
             "peer_id" => $user_id,
             "message" => "Привет, я бот!",
             "random_id" => random_int(0, 1000000),
-            "keyboard" => START_KEYBOARD
+            "keyboard" => json_encode($this->getKeyboard(), JSON_UNESCAPED_UNICODE)
         ]);
     }
 
@@ -41,6 +40,25 @@ class Start implements Action
     public function getParams(): array
     {
         return $this->params;
+    }
+
+    public function getKeyboard(): array
+    {
+        return [
+            "one_time" => false,
+            "buttons" => [
+                [
+                    [
+                        "action" => [
+                            "type" => "text",
+                            "payload" => json_encode(["button" => "start"]),
+                            "label" => "Начать"
+                        ],
+                        "color" => "primary"
+                    ]
+                ]
+            ]
+        ];
     }
 
 }
