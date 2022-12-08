@@ -8,6 +8,7 @@ require_once "config.php";
 use Bot\action\ActionStorage;
 use Bot\action\GetRandomDish;
 use Bot\action\Help;
+use Bot\action\Init;
 use Bot\action\Start;
 use VK\CallbackApi\Server\VKCallbackApiServerHandler;
 use VK\Client\VKApiClient;
@@ -23,7 +24,8 @@ class ServerHandler extends VKCallbackApiServerHandler
         $this->actionStorage = new ActionStorage(
             new Start($this->vkApi),
             new Help($this->vkApi),
-            new GetRandomDish($this->vkApi)
+            new GetRandomDish($this->vkApi),
+            new Init($this->vkApi)
         );
         $this->actionStorage->init($this->actionStorage);
 

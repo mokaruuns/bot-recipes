@@ -23,7 +23,7 @@ class Database
             $this->conn = new PDO("pgsql:host=$this->host;port=$this->port;dbname=$this->db_name;user=$this->username;password=$this->password");
             return $this->conn;
         } catch (PDOException $exception) {
-            echo "Connection error: " . $exception->getMessage();
+//            echo "Connection error: " . $exception->getMessage();
             die();
         }
     }
@@ -93,13 +93,14 @@ class Database
 
                 $recipe = explode("', '", substr($data[5], 2, -2));
 
-                $helper.insertFullDish($name, $url, $recipe, $images, $ingredients);
+                $helper->insertFullDish($name, $url, $recipe, $images, $ingredients);
                 $row++;
-                if ($row % 500 == 0) {
-                    echo "processed: " . $row . PHP_EOL;
-                }
+//                if ($row % 500 == 0) {
+//                    echo "processed: " . $row . PHP_EOL;
+//                }
             }
             fclose($handle);
         }
     }
 }
+
