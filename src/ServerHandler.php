@@ -3,13 +3,17 @@ declare(strict_types=1);
 
 namespace Bot;
 
-require_once "config.php";
+require_once "class/config.php";
 
 use Bot\action\ActionStorage;
+use Bot\action\GetDishById;
+use Bot\action\GetDishByIngredients;
+use Bot\action\GetLikedDishes;
 use Bot\action\GetRandomDish;
 use Bot\action\Help;
-use Bot\action\Init;
+use Bot\action\LikeDish;
 use Bot\action\Start;
+use Exception;
 use VK\CallbackApi\Server\VKCallbackApiServerHandler;
 use VK\Client\VKApiClient;
 
@@ -24,11 +28,10 @@ class ServerHandler extends VKCallbackApiServerHandler
         $this->actionStorage = new ActionStorage(
             new Start($this->vkApi),
             new Help($this->vkApi),
-            new GetRandomDish($this->vkApi)
+            new GetDishByIngredients($this->vkApi),
+            new GetDishById($this->vkApi)
         );
         $this->actionStorage->init($this->actionStorage);
-
-
     }
 
     function confirmation(int $group_id, ?string $secret)
@@ -49,17 +52,26 @@ class ServerHandler extends VKCallbackApiServerHandler
         $commandAndArgs = $this->getCommandAndArgs($text);
         $action = $this->actionStorage->getAction($commandAndArgs["command"]);
         if ($action) {
-            $action->execute($message->peer_id, $commandAndArgs["args"]);
+            try {
+                $action->execute($message->peer_id, $commandAndArgs["args"]);
+            } catch (Exception $e) {
+                if ($message->peer_id == ADMIN_ID) {
+                    $action->sendError($message->peer_id, $e->getMessage());
+                } else {
+                    $action->sendError($message->peer_id, "Произошла ошибка, попробуйте другой запрос");
+                }
+            }
         } else {
             $this->vkApi->messages()->send(BOT_TOKEN, [
                 "peer_id" => $message->peer_id,
-                "message" => "Неизвестная команда",
+                "message" => "Неизвестная команда. Для получения списка команд введите help",
                 "random_id" => random_int(0, 1000000)
             ]);
         }
 
         echo "ok";
     }
+
 
     private function getCommandAndArgs(string $text): array
     {

@@ -33,7 +33,7 @@ class Helper
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    private function getDishByIngredientsId(array $ingredients): array
+    public function getDishIdByIngredientsId(array $ingredients): array
     {
         $include = $this->getDishByIngredientsIdInclude($ingredients);
         $exclude = $this->getDishByIngredientsIdExclude($ingredients);
@@ -41,9 +41,9 @@ class Helper
     }
 
 
-    function getManySimilarIngredients($conn, array $ingredients): array
+    function getManySimilarIngredients(array $ingredients): array
     {
-        $ingredient = new Ingredient($conn);
+        $ingredient = new Ingredient($this->conn);
         $res = [];
         foreach ($ingredients as $ingredientName) {
             $ingredient->set(["ingredient" => $ingredientName]);

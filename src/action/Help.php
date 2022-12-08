@@ -37,7 +37,7 @@ class Help implements Action
     {
         $actionNames = implode(" | ", $action->getNames());
         $description = $action->getDescription();
-        return $actionNames . PHP_EOL . PHP_EOL . $description;
+        return $actionNames . PHP_EOL . $description;
 
     }
 
@@ -48,12 +48,24 @@ class Help implements Action
 
     public function getDescription(): string
     {
-        return "Для получения информации о команде введите: help <команда>";
+        $message = "Помощь по командам" . PHP_EOL;
+        $message .= "help - выводит список команд" . PHP_EOL;
+        $message .= "help [команда] - выводит описание команды";
+        return $message;
     }
 
 
     public function setActionStorage(ActionStorage $actionStorage): void
     {
         $this->actionStorage = $actionStorage;
+    }
+
+    public function sendError(int $user_id, string $message): void
+    {
+        $this->vkApi->messages()->send(BOT_TOKEN, [
+            "peer_id" => $user_id,
+            "message" => $message,
+            "random_id" => random_int(0, 1000000)
+        ]);
     }
 }

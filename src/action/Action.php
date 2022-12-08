@@ -16,4 +16,6 @@ interface Action
 
     public function setActionStorage(ActionStorage $actionStorage): void;
 
+    public function sendError(int $user_id, string $message): void;
+
 }

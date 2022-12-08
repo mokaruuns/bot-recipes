@@ -30,6 +30,14 @@ class Database
         }
     }
 
+    function dropTables(): void
+    {
+        $query = "DROP TABLE IF EXISTS dishes, dish_ingredient, ingredients, users, user_dish, user_ingredient, user_dish_ingredient";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+    }
+
 
     public function getConnection(): ?PDO
     {
@@ -70,6 +78,36 @@ class Database
         $this->conn->exec($query);
     }
 
+    private function createPersonsTable(): void
+    {
+        $query = "CREATE TABLE IF NOT EXISTS persons (
+            id SERIAL PRIMARY KEY,
+            vk_id int NOT NULL,
+            chat_position int NOT NULL
+        )";
+        $this->conn->exec($query);
+    }
+
+    private function createLikedDishesTable(): void
+    {
+        $query = "CREATE TABLE IF NOT EXISTS liked_dishes (
+            id SERIAL PRIMARY KEY,
+            person_id int NOT NULL,
+            dish_id int NOT NULL
+        )";
+        $this->conn->exec($query);
+    }
+
+    private function createCurrentIngredientsTable(): void
+    {
+        $query = "CREATE TABLE IF NOT EXISTS current_ingredients (
+            id SERIAL PRIMARY KEY,
+            person_id int NOT NULL,
+            ingredient_id int NOT NULL
+        )";
+        $this->conn->exec($query);
+    }
+
     private function addExtension(): void
     {
         $query = "CREATE EXTENSION IF NOT EXISTS tsm_system_rows";
@@ -82,6 +120,9 @@ class Database
         $this->createDishesTable();
         $this->createIngredientsTable();
         $this->createDishIngredientTable();
+        $this->createPersonsTable();
+        $this->createLikedDishesTable();
+        $this->createCurrentIngredientsTable();
         $this->fillDishesTable();
     }
 
@@ -115,9 +156,9 @@ class Database
 
                 $this->insertFullDish($name, $url, $recipe, $images, $ingredients);
                 $row++;
-//                if ($row % 500 == 0) {
-//                    echo "processed: " . $row . PHP_EOL;
-//                }
+                if ($row % 500 == 0) {
+                    echo "processed: " . $row . PHP_EOL;
+                }
             }
             fclose($handle);
         }

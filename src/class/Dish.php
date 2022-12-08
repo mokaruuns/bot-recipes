@@ -1,6 +1,7 @@
 <?php
 
 namespace Bot\class;
+
 use PDO;
 
 class Dish
@@ -26,6 +27,7 @@ class Dish
     public function get(): array
     {
         return array(
+            'id' => $this->id,
             'name' => $this->name,
             'url' => $this->url,
             'count_ingredients' => $this->count_ingredients,
@@ -43,7 +45,6 @@ class Dish
         $this->images_url = $dish['images_url'];
     }
 
-
     private function insertReal(): int
     {
         $query = "INSERT INTO " . $this->table_name . " (name, url, count_ingredients, recipe, images_url) VALUES (:name, :url, :count_ingredients, :recipe, :images_url)";
@@ -59,9 +60,9 @@ class Dish
         $stmt->bindParam(":images_url", $images_url);
 
         if ($stmt->execute()) {
-            return $this->conn->lastInsertId();
+            $this->id = $this->conn->lastInsertId();
+            return $this->id;
         }
-
         return 0;
     }
 
@@ -86,7 +87,12 @@ class Dish
 
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result['recipe'] = json_decode($result['recipe']);
+        $result['images_url'] = json_decode($result['images_url']);
+        return $result;
     }
 
     private function getByName()
@@ -98,7 +104,13 @@ class Dish
         $stmt->bindParam(":name", $this->name);
 
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            $result['recipe'] = json_decode($result['recipe']);
+            $result['images_url'] = json_decode($result['images_url']);
+        }
+        return $result;
     }
 
     public function insertDishIngredient(int $ingredient_id): bool
@@ -106,7 +118,6 @@ class Dish
         $query = "INSERT INTO " . $this->table_name_dish_ingredient . " (dish_id, ingredient_id) VALUES (:dish_id, :ingredient_id)";
 
         $stmt = $this->conn->prepare($query);
-
         $stmt->bindParam(":dish_id", $this->id);
         $stmt->bindParam(":ingredient_id", $ingredient_id);
 
@@ -118,16 +129,37 @@ class Dish
     }
 
 
-    public function getDishById(mixed $recipe_id): array
+    public function getById(int $id): array
     {
         $query = "SELECT * FROM " . $this->table_name . " WHERE id = :id";
 
         $stmt = $this->conn->prepare($query);
 
-        $stmt->bindParam(":id", $recipe_id);
+        $stmt->bindParam(":id", $id);
 
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result['recipe'] = json_decode($result['recipe']);
+        $result['images_url'] = json_decode($result['images_url']);
+        return $result;
+    }
+
+    public function getIngredientsNames($id): array
+    {
+        $query = "SELECT i.ingredient FROM " . $this->table_name_dish_ingredient . " di INNER JOIN ingredients i ON di.ingredient_id = i.id WHERE di.dish_id = :dish_id";
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(":dish_id", $id);
+
+        $stmt->execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $names = array();
+        foreach ($result as $item) {
+            $names[] = $item['ingredient'];
+        }
+        return $names;
     }
 }
