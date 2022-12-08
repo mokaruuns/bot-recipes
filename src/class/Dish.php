@@ -39,8 +39,8 @@ class Dish
         $this->name = mb_strtolower($dish['name']);
         $this->url = $dish['url'];
         $this->count_ingredients = $dish['count_ingredients'];
-        $this->recipe = json_decode($dish['recipe']);
-        $this->images_url = json_decode($dish['images_url']);
+        $this->recipe = $dish['recipe'];
+        $this->images_url = $dish['images_url'];
     }
 
 

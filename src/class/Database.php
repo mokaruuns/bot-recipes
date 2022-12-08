@@ -1,8 +1,10 @@
 <?php
 
-namespace Bot\config;
+namespace Bot\class;
 
-use Bot\class\Helper;
+require_once realpath(dirname(__FILE__)) . '/Dish.php';
+require_once realpath(dirname(__FILE__)) . '/Ingredient.php';
+
 use PDO;
 use PDOException;
 
@@ -58,7 +60,6 @@ class Database
     }
 
 
-
     private function createDishIngredientTable(): void
     {
         $query = "CREATE TABLE IF NOT EXISTS dish_ingredient (
@@ -84,10 +85,22 @@ class Database
         $this->fillDishesTable();
     }
 
+    public function insertFullDish($name, $url, $recipes, $images, $ingredients): void
+    {
+        $dish = new Dish($this->conn);
+        $dish->set(["name" => $name, "url" => $url, "count_ingredients" => count($ingredients), "recipe" => $recipes, "images_url" => $images]);
+        $dish->insert();
+        foreach ($ingredients as $ingredient_name) {
+            $ingredient = new Ingredient($this->conn);
+            $ingredient->set(["ingredient" => $ingredient_name]);
+            $ingredient->insert();
+            $dish->insertDishIngredient($ingredient->getIngredientId());
+        }
+    }
+
     private function fillDishesTable(): void
     {
         $row = 1;
-        $helper = new Helper($this->conn);
 
         if (($handle = fopen("recipes.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle, 20000, "~")) !== FALSE) {
@@ -100,7 +113,7 @@ class Database
 
                 $recipe = explode("', '", substr($data[5], 2, -2));
 
-                $helper->insertFullDish($name, $url, $recipe, $images, $ingredients);
+                $this->insertFullDish($name, $url, $recipe, $images, $ingredients);
                 $row++;
 //                if ($row % 500 == 0) {
 //                    echo "processed: " . $row . PHP_EOL;

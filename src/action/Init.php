@@ -2,7 +2,7 @@
 
 namespace Bot\action;
 
-use Bot\config\Database;
+use Bot\class\Database;
 use VK\Client\VKApiClient;
 
 class Init implements Action

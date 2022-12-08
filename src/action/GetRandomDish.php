@@ -3,7 +3,7 @@
 namespace Bot\action;
 
 use Bot\class\Dish;
-use Bot\config\Database;
+use Bot\class\Database;
 use VK\Client\VKApiClient;
 
 class GetRandomDish implements Action

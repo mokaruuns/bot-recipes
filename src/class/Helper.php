@@ -41,19 +41,6 @@ class Helper
     }
 
 
-    public function insertFullDish($name, $url, $recipes, $images, $ingredients): void
-    {
-        $dish = new Dish($this->conn);
-        $dish->set(["name" => $name, "url" => $url, "count_ingredients" => count($ingredients), "recipe" => $recipes, "images_url" => $images]);
-        $dish->insert();
-        foreach ($ingredients as $ingredient_name) {
-            $ingredient = new Ingredient($this->conn);
-            $ingredient->set(["ingredient" => $ingredient_name]);
-            $ingredient->insert();
-            $dish->insertDishIngredient($ingredient->getIngredientId());
-        }
-    }
-
     function getManySimilarIngredients($conn, array $ingredients): array
     {
         $ingredient = new Ingredient($conn);
