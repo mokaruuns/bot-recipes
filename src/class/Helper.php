@@ -2,8 +2,6 @@
 
 namespace Bot\class;
 
-use Dish;
-use Ingredient;
 use PDO;
 
 class Helper

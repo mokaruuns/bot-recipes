@@ -1,7 +1,8 @@
 <?php
 
+namespace Bot\config;
 
-require_once realpath(dirname(__FILE__)) . '/../action/helper.php';
+use PDO;
 
 class Database
 {

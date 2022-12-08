@@ -1,5 +1,8 @@
 <?php
 
+namespace Bot\class;
+use PDO;
+
 class Person
 {
 

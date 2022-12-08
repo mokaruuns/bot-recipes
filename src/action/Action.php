@@ -12,4 +12,5 @@ interface Action
 
     public function getParams(): array;
 
+
 }

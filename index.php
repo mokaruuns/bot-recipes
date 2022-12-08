@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 
 use Bot\ServerHandler;
-
 require_once "vendor/autoload.php";
-require_once "config.php";
 
 
 $handler = new ServerHandler();

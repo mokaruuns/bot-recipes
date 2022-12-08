@@ -2,6 +2,7 @@
 
 namespace Bot\action;
 
+use Exception;
 use VK\Client\VKApiClient;
 use VK\Exceptions\Api\VKApiMessagesCantFwdException;
 use VK\Exceptions\Api\VKApiMessagesChatBotFeatureException;
@@ -42,7 +43,7 @@ class Start implements Action
      * @throws VKApiException
      * @throws VKApiMessagesContactNotFoundException
      * @throws VKApiMessagesTooLongForwardsException
-     * @throws \Exception
+     * @throws Exception
      */
     public function execute(int $user_id, array $args): void
     {
@@ -50,7 +51,8 @@ class Start implements Action
         $this->vkApi->messages()->send(BOT_TOKEN, [
             "peer_id" => $user_id,
             "message" => "Привет, я бот!",
-            "random_id" => random_int(0, 1000000)
+            "random_id" => random_int(0, 1000000),
+            "keyboard" => START_KEYBOARD
         ]);
     }
 

@@ -1,5 +1,9 @@
 <?php
 
+
+namespace Bot\class;
+use PDO;
+
 class Ingredient
 {
     private int $id;
