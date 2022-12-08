@@ -2,7 +2,9 @@
 
 namespace Bot\config;
 
+use Bot\class\Helper;
 use PDO;
+use PDOException;
 
 class Database
 {
@@ -78,7 +80,7 @@ class Database
     private function fillDishesTable(): void
     {
         $row = 1;
-
+        $helper = new Helper($this->conn);
 
         if (($handle = fopen("recipes.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle, 20000, "~")) !== FALSE) {
@@ -91,7 +93,7 @@ class Database
 
                 $recipe = explode("', '", substr($data[5], 2, -2));
 
-                insertFullDish($this->conn, $name, $url, $recipe, $images, $ingredients);
+                $helper.insertFullDish($name, $url, $recipe, $images, $ingredients);
                 $row++;
                 if ($row % 500 == 0) {
                     echo "processed: " . $row . PHP_EOL;

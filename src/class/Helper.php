@@ -41,13 +41,13 @@ class Helper
     }
 
 
-    function insertFullDish($conn, $name, $url, $recipes, $images, $ingredients): void
+    public function insertFullDish($name, $url, $recipes, $images, $ingredients): void
     {
-        $dish = new Dish($conn);
+        $dish = new Dish($this->conn);
         $dish->set(["name" => $name, "url" => $url, "count_ingredients" => count($ingredients), "recipe" => $recipes, "images_url" => $images]);
         $dish->insert();
         foreach ($ingredients as $ingredient_name) {
-            $ingredient = new Ingredient($conn);
+            $ingredient = new Ingredient($this->conn);
             $ingredient->set(["ingredient" => $ingredient_name]);
             $ingredient->insert();
             $dish->insertDishIngredient($ingredient->getIngredientId());

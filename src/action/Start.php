@@ -2,21 +2,9 @@
 
 namespace Bot\action;
 
-use Exception;
 use VK\Client\VKApiClient;
-use VK\Exceptions\Api\VKApiMessagesCantFwdException;
-use VK\Exceptions\Api\VKApiMessagesChatBotFeatureException;
-use VK\Exceptions\Api\VKApiMessagesChatUserNoAccessException;
-use VK\Exceptions\Api\VKApiMessagesContactNotFoundException;
-use VK\Exceptions\Api\VKApiMessagesDenySendException;
-use VK\Exceptions\Api\VKApiMessagesKeyboardInvalidException;
-use VK\Exceptions\Api\VKApiMessagesPrivacyException;
-use VK\Exceptions\Api\VKApiMessagesTooLongForwardsException;
-use VK\Exceptions\Api\VKApiMessagesTooLongMessageException;
-use VK\Exceptions\Api\VKApiMessagesTooManyPostsException;
-use VK\Exceptions\Api\VKApiMessagesUserBlockedException;
-use VK\Exceptions\VKApiException;
-use VK\Exceptions\VKClientException;
+
+include __DIR__ . "/../resources/actions.php";
 
 class Start implements Action
 {
@@ -29,22 +17,6 @@ class Start implements Action
         $this->vkApi = $vkApi;
     }
 
-    /**
-     * @throws VKApiMessagesPrivacyException
-     * @throws VKApiMessagesDenySendException
-     * @throws VKApiMessagesTooLongMessageException
-     * @throws VKApiMessagesChatUserNoAccessException
-     * @throws VKApiMessagesTooManyPostsException
-     * @throws VKApiMessagesChatBotFeatureException
-     * @throws VKClientException
-     * @throws VKApiMessagesCantFwdException
-     * @throws VKApiMessagesUserBlockedException
-     * @throws VKApiMessagesKeyboardInvalidException
-     * @throws VKApiException
-     * @throws VKApiMessagesContactNotFoundException
-     * @throws VKApiMessagesTooLongForwardsException
-     * @throws Exception
-     */
     public function execute(int $user_id, array $args): void
     {
 
