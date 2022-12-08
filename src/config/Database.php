@@ -69,8 +69,15 @@ class Database
         $this->conn->exec($query);
     }
 
+    private function addExtension(): void
+    {
+        $query = "CREATE EXTENSION IF NOT EXISTS tsm_system_rows";
+        $this->conn->exec($query);
+    }
+
     public function fillDatabase(): void
     {
+        $this->addExtension();
         $this->createDishesTable();
         $this->createIngredientsTable();
         $this->createDishIngredientTable();
