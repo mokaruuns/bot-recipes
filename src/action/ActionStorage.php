@@ -42,4 +42,11 @@ class ActionStorage
         $this->actions = array_diff($this->actions, [$action]);
     }
 
+    public function init(ActionStorage $actionStorage): void
+    {
+        foreach ($this->actions as $action) {
+            $action->setActionStorage($actionStorage);
+        }
+    }
+
 }

@@ -7,8 +7,8 @@ use VK\Client\VKApiClient;
 
 class Start implements Action
 {
-    private array $params;
     private VKApiClient $vkApi;
+    private ActionStorage $actionStorage;
 
 
     public function __construct(VKApiClient $vkApi)
@@ -22,8 +22,7 @@ class Start implements Action
         $this->vkApi->messages()->send(BOT_TOKEN, [
             "peer_id" => $user_id,
             "message" => "Привет, я бот!",
-            "random_id" => random_int(0, 1000000),
-            "keyboard" => json_encode($this->getKeyboard(), JSON_UNESCAPED_UNICODE)
+            "random_id" => random_int(0, 1000000)
         ]);
     }
 
@@ -32,33 +31,13 @@ class Start implements Action
         return array("start", "старт");
     }
 
-    public function setParams(array $params): void
+    public function getDescription(): string
     {
-        $this->params = $params;
+        return "Начало работы с ботом";
     }
 
-    public function getParams(): array
+    public function setActionStorage(ActionStorage $actionStorage): void
     {
-        return $this->params;
+        // TODO: Implement setActionStorage() method.
     }
-
-    public function getKeyboard(): array
-    {
-        return [
-            "one_time" => false,
-            "buttons" => [
-                [
-                    [
-                        "action" => [
-                            "type" => "text",
-                            "payload" => json_encode(["button" => "start"]),
-                            "label" => "Начать"
-                        ],
-                        "color" => "primary"
-                    ]
-                ]
-            ]
-        ];
-    }
-
 }

@@ -6,6 +6,7 @@ namespace Bot;
 require_once "config.php";
 
 use Bot\action\ActionStorage;
+use Bot\action\Help;
 use Bot\action\Start;
 use VK\CallbackApi\Server\VKCallbackApiServerHandler;
 use VK\Client\VKApiClient;
@@ -19,8 +20,11 @@ class ServerHandler extends VKCallbackApiServerHandler
     {
         $this->vkApi = new VKApiClient("5.131");
         $this->actionStorage = new ActionStorage(
-            new Start($this->vkApi)
+            new Start($this->vkApi),
+            new Help($this->vkApi)
         );
+        $this->actionStorage->init($this->actionStorage);
+
 
     }
 
@@ -39,20 +43,27 @@ class ServerHandler extends VKCallbackApiServerHandler
         }
         $message = $object["message"];
         $text = $message->text;
-        $args = preg_split("/\s+/", $text);
-        $user_id = $message->from_id;
-
-        $command = $this->actionStorage->getAction(array_shift($args));
-        if ($command != null) {
-            $command->execute($user_id, $args);
+        $commandAndArgs = $this->getCommandAndArgs($text);
+        $action = $this->actionStorage->getAction($commandAndArgs["command"]);
+        if ($action) {
+            $action->execute($message->peer_id, $commandAndArgs["args"]);
         } else {
             $this->vkApi->messages()->send(BOT_TOKEN, [
-                "user_id" => $user_id,
-                "random_id" => random_int(0, PHP_INT_MAX),
-                "message" => "Command not found!",
+                "peer_id" => $message->peer_id,
+                "message" => "Неизвестная команда",
+                "random_id" => random_int(0, 1000000)
             ]);
         }
 
         echo "ok";
+    }
+
+    private function getCommandAndArgs(string $text): array
+    {
+        $text = mb_strtolower($text);
+        $args = preg_split('/\s+/', $text, limit: 2);
+        $command = array_shift($args);
+        $args = preg_split('/\s*[,.]\s*/', $args[0] ?? "");
+        return ["command" => $command, "args" => $args];
     }
 }
